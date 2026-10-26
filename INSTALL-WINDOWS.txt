@@ -1,0 +1,27 @@
+HARMIVOX-6 - installing on Windows
+==================================
+
+1. Copy the folder "HARMIVOX-6.vst3" into:
+      C:\Program Files\Common Files\VST3
+   (Open File Explorer, paste that path into the address bar, then drag the
+   folder in. Windows may ask for permission - click Continue.)
+
+2. Open FL Studio. Go to Options > Manage plugins, then click "Find plugins".
+   HARMIVOX-6 shows up under Effects (made by RedFlame Ent).
+
+3. Put HARMIVOX-6 on the mixer insert your vocal plays through.
+
+4. In the plugin: Import page > Arm capture, then press play in FL.
+   Stop FL when the section is done. Or just drag a WAV onto the plugin.
+
+5. Tune page > Add voices... to build doubles and harmonies.
+
+6. When you're happy, drag "Drag to playlist" (bottom left) onto FL's
+   playlist at bar 1 to print the vocals as audio clips.
+
+HARMIVOX-6.exe is a standalone version (no FL needed). Use it for the
+Voice lab if routing a mic through FL is awkward: its audio settings are
+under the Options button at the top of the window.
+
+Your sessions, exports and voices are saved in:
+   Documents\HARMIVOX-6

@@ -1,0 +1,63 @@
+name: Build HARMIVOX-6
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  engine-tests:
+    name: Engine tests (Linux)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libfreetype-dev libfontconfig1-dev libxrandr-dev \
+            libxinerama-dev libxcursor-dev libxcomposite-dev libgl1-mesa-dev ninja-build
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DHVX_BUILD_TESTS=ON
+      - name: Build tests
+        run: cmake --build build --target HvxTests
+      - name: Run tests
+        run: ./build/HvxTests_artefacts/Release/HvxTests test-output
+
+  windows:
+    name: Windows VST3 + standalone
+    runs-on: windows-latest
+    needs: engine-tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+      - name: Build
+        run: cmake --build build --config Release --target Harmivox6_VST3 Harmivox6_Standalone --parallel
+      - name: Package
+        shell: pwsh
+        run: |
+          $out = "HARMIVOX-6-Windows"
+          New-Item -ItemType Directory -Force -Path $out | Out-Null
+          Copy-Item -Recurse "build/Harmivox6_artefacts/Release/VST3/HARMIVOX-6.vst3" "$out/"
+          Copy-Item "build/Harmivox6_artefacts/Release/Standalone/HARMIVOX-6.exe" "$out/"
+          Copy-Item "INSTALL-WINDOWS.txt" "$out/"
+          Compress-Archive -Path "$out/*" -DestinationPath "HARMIVOX-6-Windows.zip" -Force
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: HARMIVOX-6-Windows
+          path: HARMIVOX-6-Windows.zip
+      - name: Publish to the "latest" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: HARMIVOX-6 (latest build)
+          prerelease: true
+          make_latest: true
+          files: HARMIVOX-6-Windows.zip
+          body: |
+            Newest Windows build of HARMIVOX-6, made automatically from the main branch.
+            Download HARMIVOX-6-Windows.zip below, then follow INSTALL-WINDOWS.txt inside it.
