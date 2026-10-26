@@ -356,10 +356,11 @@ void HarmivoxEditor::paintOverChildren (juce::Graphics& g)
 //==============================================================================
 void HarmivoxEditor::openAddVoices()
 {
+    juce::Component::SafePointer<HarmivoxEditor> sp (this);
     if (proc.session.doc.lead() == nullptr) { toast ("Import a take first."); return; }
     closeOverlays();
     addVoices = std::make_unique<AddVoicesDialog> (ctx);
-    addVoices->onClose = [this] { juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<HarmivoxEditor> (this)] { if (sp) { sp->addVoices.reset(); sp->repaint(); } }); };
+    addVoices->onClose = [sp] { juce::MessageManager::callAsync ([sp] { if (sp) { sp->addVoices.reset(); sp->repaint(); } }); };
     addAndMakeVisible (*addVoices);
     addVoices->setBounds (getLocalBounds());
     addVoices->grabKeyboardFocus();
@@ -367,10 +368,11 @@ void HarmivoxEditor::openAddVoices()
 
 void HarmivoxEditor::openVoiceLab()
 {
+    juce::Component::SafePointer<HarmivoxEditor> sp (this);
     closeOverlays();
     labPicker = std::make_unique<VoiceLabPicker> (ctx);
-    labPicker->onClose = [this] { juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<HarmivoxEditor> (this)] { if (sp) sp->labPicker.reset(); }); };
-    labPicker->onStartSession = [this] { juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<HarmivoxEditor> (this)] { if (sp) sp->openVoiceSession(); }); };
+    labPicker->onClose = [sp] { juce::MessageManager::callAsync ([sp] { if (sp) sp->labPicker.reset(); }); };
+    labPicker->onStartSession = [sp] { juce::MessageManager::callAsync ([sp] { if (sp) sp->openVoiceSession(); }); };
     addAndMakeVisible (*labPicker);
     labPicker->setBounds (getLocalBounds());
     labPicker->grabKeyboardFocus();
@@ -378,9 +380,10 @@ void HarmivoxEditor::openVoiceLab()
 
 void HarmivoxEditor::openVoiceSession()
 {
+    juce::Component::SafePointer<HarmivoxEditor> sp (this);
     closeOverlays();
     labSession = std::make_unique<VoiceLabSession> (ctx);
-    labSession->onClose = [this] { juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<HarmivoxEditor> (this)] { if (sp) { sp->labSession.reset(); sp->openVoiceLab(); } }); };
+    labSession->onClose = [sp] { juce::MessageManager::callAsync ([sp] { if (sp) { sp->labSession.reset(); sp->openVoiceLab(); } }); };
     addAndMakeVisible (*labSession);
     labSession->setBounds (getLocalBounds());
     labSession->grabKeyboardFocus();
