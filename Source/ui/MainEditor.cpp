@@ -5,13 +5,14 @@
 #include "AddVoicesDialog.h"
 #include "VoiceLab.h"
 #include "DevSnapshot.h"
+#include "BinaryData.h"
 
 using namespace hvx;
 using namespace hvx::ui;
 
 namespace
 {
-constexpr int kHeaderH = 64;
+constexpr int kHeaderH = 76;
 constexpr int kLeftW = 316;
 constexpr int kToolbarH = 52;
 
@@ -252,7 +253,7 @@ void HarmivoxEditor::resized()
     {
         auto h = headerArea.reduced (16, 12);
         helpBtn->setBounds (h.removeFromRight (40));
-        auto tabsArea = headerArea.withSizeKeepingCentre (juce::jmin (640, getWidth() - 620), 40);
+        auto tabsArea = headerArea.withSizeKeepingCentre (juce::jmin (640, getWidth() - 660), 40).translated (40, 0);
         const int w = tabsArea.getWidth() / 5;
         for (auto* t : tabs) t->setBounds (tabsArea.removeFromLeft (w).reduced (4, 0));
     }
@@ -275,27 +276,13 @@ void HarmivoxEditor::paint (juce::Graphics& g)
     g.setColour (col::border);
     g.drawHorizontalLine (headerArea.getBottom() - 1, 0, (float) getWidth());
 
-    // logo: a stack of six voices
-    auto logo = headerArea.reduced (18, 14).removeFromLeft (36).toFloat();
-    g.setColour (col::raised);
-    g.fillRoundedRectangle (logo, 8.0f);
-    const float hs[] = { 0.35f, 0.65f, 1.0f, 0.8f, 0.5f, 0.3f };
-    for (int i = 0; i < 6; ++i)
+    // logo artwork
+    static const juce::Image logoImg = juce::ImageCache::getFromMemory (BinaryData::logo_png, BinaryData::logo_pngSize);
+    if (logoImg.isValid())
     {
-        const float bw = 3.0f, gap = 1.6f;
-        const float x = logo.getCentreX() - (6 * bw + 5 * gap) * 0.5f + i * (bw + gap);
-        const float h = (logo.getHeight() - 12.0f) * hs[i];
-        auto bar = juce::Rectangle<float> (x, logo.getCentreY() - h * 0.5f, bw, h);
-        g.setGradientFill (juce::ColourGradient (col::ember, logo.getX(), logo.getBottom(), col::flame, logo.getRight(), logo.getY(), false));
-        g.fillRoundedRectangle (bar, 1.5f);
+        auto area = headerArea.reduced (14, 5).withWidth (300).toFloat();
+        g.drawImage (logoImg, area, juce::RectanglePlacement::xLeft | juce::RectanglePlacement::yMid | juce::RectanglePlacement::onlyReduceInSize);
     }
-    auto word = juce::Rectangle<float> (logo.getRight() + 12, (float) headerArea.getY(), 220, (float) headerArea.getHeight());
-    g.setFont (Fonts::display (25.0f).withExtraKerningFactor (0.04f));
-    g.setColour (col::text);
-    const float w1 = juce::GlyphArrangement::getStringWidth (g.getCurrentFont(), "HARMIVOX");
-    g.drawText ("HARMIVOX", word, juce::Justification::centredLeft);
-    g.setGradientFill (accentGradient (word.withTrimmedLeft (w1).withWidth (30)));
-    g.drawText ("-6", word.withTrimmedLeft (w1 + 1), juce::Justification::centredLeft);
 
     // tab numbers
     for (int i = 0; i < tabs.size(); ++i)

@@ -16,8 +16,8 @@ namespace col
     const juce::Colour text      { 0xffece8e3 };
     const juce::Colour textDim   { 0xff9a9cab };
     const juce::Colour textFaint { 0xff5f6272 };
-    const juce::Colour ember     { 0xffff5a2e };
-    const juce::Colour flame     { 0xffe0337a };
+    const juce::Colour ember     { 0xffff4433 };
+    const juce::Colour flame     { 0xffc8102e };
     const juce::Colour amber     { 0xffffb547 };
     const juce::Colour good      { 0xff4fd18b };
     const juce::Colour bad       { 0xffff4d5e };

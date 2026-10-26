@@ -473,10 +473,10 @@ public:
             g.setColour (t.colour.withAlpha (sel ? 0.75f : 0.38f));
             g.drawRoundedRectangle (cr.reduced (0.5f), 6.0f, sel ? 1.4f : 1.0f);
 
-            auto label = (t.source->name.isNotEmpty() ? t.source->name : t.name);
+            const auto& label = t.name;
             g.setColour (t.colour.withAlpha (0.95f));
             g.setFont (Fonts::semi (12.0f));
-            g.drawText (t.isVoice() ? t.name : label, cr.reduced (8, 3).removeFromTop (15), juce::Justification::centredLeft, true);
+            g.drawText (label, cr.reduced (8, 3).removeFromTop (15), juce::Justification::centredLeft, true);
 
             auto wave = cr.reduced (2.0f, 0).withTrimmedTop (17.0f).withTrimmedBottom (4.0f);
             const bool busy = ctx.session.isBusy (t.id);

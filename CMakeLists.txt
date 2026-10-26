@@ -29,7 +29,8 @@ juce_add_binary_data(HvxBinaryData SOURCES
     Resources/fonts/Barlow-Bold.ttf
     Resources/fonts/BarlowCondensed-SemiBold.ttf
     Resources/fonts/BarlowCondensed-Bold.ttf
-    Resources/fonts/ShareTechMono-Regular.ttf)
+    Resources/fonts/ShareTechMono-Regular.ttf
+    Resources/images/logo.png)
 
 set(HVX_ENGINE_SOURCES
     Source/engine/Model.cpp
