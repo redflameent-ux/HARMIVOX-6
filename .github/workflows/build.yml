@@ -35,7 +35,17 @@ jobs:
       - name: Configure
         run: cmake -S . -B build -A x64
       - name: Build
-        run: cmake --build build --config Release --target Harmivox6_VST3 Harmivox6_Standalone --parallel
+        shell: pwsh
+        run: |
+          cmake --build build --config Release --target Harmivox6_VST3 Harmivox6_Standalone --parallel 2>&1 | Tee-Object -FilePath build-log.txt
+          if ($LASTEXITCODE -ne 0) {
+            Select-String -Path build-log.txt -Pattern ' error |fatal error' | Select-Object -First 40 | ForEach-Object {
+              $l = $_.Line -replace '^.*[\\/]Source[\\/]', 'Source/'
+              if ($l.Length -gt 600) { $l = $l.Substring(0, 600) }
+              Write-Output "::error::$l"
+            }
+            exit 1
+          }
       - name: Package
         shell: pwsh
         run: |
