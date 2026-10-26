@@ -6,8 +6,9 @@ then drag the whole stack onto your playlist.
 
 ## Get it
 
-Every push to `main` builds Windows automatically. Download **HARMIVOX-6-Windows.zip** from the
-[**latest release**](../../releases/tag/latest) and follow `INSTALL-WINDOWS.txt` inside the zip.
+Every push to `main` builds Windows automatically. Download **HARMIVOX-6-Setup.exe** from the
+[**latest release**](../../releases/tag/latest) and double-click it. It installs the VST3 where FL Studio and
+Ableton look, plus the standalone app if you want it. Uninstall from Windows Settings > Apps.
 
 ## The five steps
 

@@ -55,11 +55,25 @@ jobs:
           Copy-Item "build/Harmivox6_artefacts/Release/Standalone/HARMIVOX-6.exe" "$out/"
           Copy-Item "INSTALL-WINDOWS.txt" "$out/"
           Compress-Archive -Path "$out/*" -DestinationPath "HARMIVOX-6-Windows.zip" -Force
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y --no-progress
+            $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          }
+          $build = (Resolve-Path "build/Harmivox6_artefacts/Release").Path
+          & $iscc "/DBuildDir=$build" "/DAppVersion=0.1.${{ github.run_number }}" "installer/HARMIVOX-6.iss"
+          if ($LASTEXITCODE -ne 0) { Write-Output "::error::Installer build failed"; exit 1 }
+          Copy-Item "installer-output/HARMIVOX-6-Setup.exe" "HARMIVOX-6-Setup.exe"
       - name: Upload build
         uses: actions/upload-artifact@v4
         with:
           name: HARMIVOX-6-Windows
-          path: HARMIVOX-6-Windows.zip
+          path: |
+            HARMIVOX-6-Windows.zip
+            HARMIVOX-6-Setup.exe
       - name: Publish to the "latest" release
         uses: softprops/action-gh-release@v2
         with:
@@ -67,7 +81,14 @@ jobs:
           name: HARMIVOX-6 (latest build)
           prerelease: true
           make_latest: true
-          files: HARMIVOX-6-Windows.zip
+          files: |
+            HARMIVOX-6-Setup.exe
+            HARMIVOX-6-Windows.zip
           body: |
             Newest Windows build of HARMIVOX-6, made automatically from the main branch.
-            Download HARMIVOX-6-Windows.zip below, then follow INSTALL-WINDOWS.txt inside it.
+
+            **Download HARMIVOX-6-Setup.exe** and double-click it. It installs the VST3 into
+            C:\Program Files\Common Files\VST3 (where FL Studio and Ableton look) and, if you
+            choose, the standalone app with a Start menu shortcut. Uninstall from Windows Settings > Apps.
+
+            The .zip has the same files for manual installs.
