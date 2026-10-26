@@ -2,6 +2,7 @@
 // standalone app walks through every page and saves screenshots there, then quits.
 #include "DevSnapshot.h"
 #include "MainEditor.h"
+#include <iostream>
 
 using namespace hvx;
 
